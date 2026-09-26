@@ -6,7 +6,6 @@ from pathlib import Path
 
 
 PROJECT_FOLDER = Path(__file__).resolve().parent.parent
-
 DATABASE_PATH = PROJECT_FOLDER / "studyvault.db"
 
 
@@ -49,6 +48,7 @@ def initialize_database():
     connection = get_connection()
 
     try:
+
         # ----------------------------------------
         # SUBJECTS TABLE
         # ----------------------------------------
@@ -120,7 +120,7 @@ def initialize_database():
         )
 
         # ----------------------------------------
-        # v0.6 SPACED REPETITION COLUMNS
+        # SPACED REPETITION COLUMNS
         # ----------------------------------------
 
         if not column_exists(
@@ -221,6 +221,33 @@ def initialize_database():
             """
             CREATE INDEX IF NOT EXISTS idx_quiz_subject_id
             ON quiz_attempts(subject_id)
+            """
+        )
+
+        # ----------------------------------------
+        # STUDY SESSIONS TABLE - v0.8
+        # ----------------------------------------
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS study_sessions (
+                session_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                subject_id INTEGER NOT NULL,
+                minutes_studied INTEGER NOT NULL,
+                activity TEXT,
+                studied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (subject_id)
+                    REFERENCES subjects(subject_id)
+                    ON DELETE CASCADE
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_sessions_subject_id
+            ON study_sessions(subject_id)
             """
         )
 
