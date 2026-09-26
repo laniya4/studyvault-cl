@@ -450,7 +450,7 @@ Version 0.1 → Subjects ✅
 Version 0.2 → Notes ✅
 Version 0.3 → SQLite Database ✅
 Version 0.4 → Flashcards ✅
-Version 0.5 → Quiz System
+Version 0.5 → Quiz System ✅
 Version 0.6 → Spaced Repetition
 Version 0.7 → Search
 Version 0.8 → Study Tracking
