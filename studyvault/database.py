@@ -5,37 +5,45 @@ import sqlite3
 from pathlib import Path
 
 
-# Main project folder
 PROJECT_FOLDER = Path(__file__).resolve().parent.parent
 
-# Database location:
-# studyvault-cl/studyvault.db
 DATABASE_PATH = PROJECT_FOLDER / "studyvault.db"
 
 
 def get_connection():
     """
-    Open a connection to the StudyVault database.
+    Open a connection to the StudyVault SQLite database.
     """
 
     connection = sqlite3.connect(DATABASE_PATH)
 
-    # Lets us use:
-    # row["name"]
-    # instead of:
-    # row[0]
     connection.row_factory = sqlite3.Row
 
-    # Turn on foreign-key support.
     connection.execute("PRAGMA foreign_keys = ON")
 
     return connection
 
 
+def column_exists(connection, table_name, column_name):
+    """
+    Check whether a column already exists in a SQLite table.
+    """
+
+    columns = connection.execute(
+        f"PRAGMA table_info({table_name})"
+    ).fetchall()
+
+    for column in columns:
+        if column["name"] == column_name:
+            return True
+
+    return False
+
+
 def initialize_database():
     """
-    Create all StudyVault tables if they
-    do not already exist.
+    Create all StudyVault database tables and
+    add newer columns when needed.
     """
 
     connection = get_connection()
@@ -110,6 +118,82 @@ def initialize_database():
             ON flashcards(subject_id)
             """
         )
+
+        # ----------------------------------------
+        # v0.6 SPACED REPETITION COLUMNS
+        # ----------------------------------------
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "review_count"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN review_count INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "correct_count"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN correct_count INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "incorrect_count"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN incorrect_count INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "interval_days"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN interval_days INTEGER NOT NULL DEFAULT 0
+                """
+            )
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "last_reviewed"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN last_reviewed TEXT
+                """
+            )
+
+        if not column_exists(
+            connection,
+            "flashcards",
+            "next_review"
+        ):
+            connection.execute(
+                """
+                ALTER TABLE flashcards
+                ADD COLUMN next_review TEXT
+                """
+            )
 
         # ----------------------------------------
         # QUIZ HISTORY TABLE
