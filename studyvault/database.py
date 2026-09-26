@@ -35,7 +35,7 @@ def get_connection():
 
 def initialize_database():
     """
-    Create the StudyVault database tables if they
+    Create all StudyVault database tables if they
     do not already exist.
     """
 
@@ -77,8 +77,7 @@ def initialize_database():
             """
         )
 
-        # This helps SQLite find notes belonging
-        # to a particular subject faster.
+        # Index for finding notes by subject faster.
         connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_notes_subject_id
@@ -86,7 +85,38 @@ def initialize_database():
             """
         )
 
+        # ----------------------------------------
+        # FLASHCARDS TABLE
+        # ----------------------------------------
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS flashcards (
+                flashcard_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                subject_id INTEGER NOT NULL,
+                question TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (subject_id)
+                    REFERENCES subjects(subject_id)
+                    ON DELETE CASCADE
+            )
+            """
+        )
+
+        # Index for finding flashcards by subject faster.
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_flashcards_subject_id
+            ON flashcards(subject_id)
+            """
+        )
+
+        # Save all database changes.
         connection.commit()
 
     finally:
+        # Always close the database connection.
         connection.close()
