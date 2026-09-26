@@ -131,6 +131,6 @@ A full pseudocode design document is included in the `pseudocode` directory.
 
 ## Status
 
-🚧 StudyVault CL is currently under active development.
+ StudyVault CL is currently under active development.
 
 Current release: **Version 0.1**
