@@ -1,24 +1,23 @@
 # notes.py
-# This file handles StudyVault notes.
+# This file handles StudyVault notes using SQLite.
 
-from subjects import subjects
-
-
-# This list temporarily stores all notes.
-notes = []
-
-
-# Every note gets its own ID number.
-next_note_id = 1
+from database import get_connection
+from subjects import get_subjects
 
 
 def choose_subject():
     """
-    Show the user's subjects and let them choose one.
+    Show saved subjects and allow the user
+    to select one.
 
-    Returns the chosen subject name.
+    Returns a dictionary containing:
+    - id
+    - name
+
     Returns None if the choice is invalid.
     """
+
+    subjects = get_subjects()
 
     print()
     print("CHOOSE A SUBJECT")
@@ -30,7 +29,7 @@ def choose_subject():
         return None
 
     for number, subject in enumerate(subjects, start=1):
-        print(f"{number}. {subject}")
+        print(f'{number}. {subject["name"]}')
 
     choice = input("Choose a subject number: ").strip()
 
@@ -44,15 +43,19 @@ def choose_subject():
         print("That subject number does not exist.")
         return None
 
-    return subjects[choice_number - 1]
+    chosen_subject = subjects[choice_number - 1]
+
+    return {
+        "id": chosen_subject["subject_id"],
+        "name": chosen_subject["name"]
+    }
 
 
 def create_note():
     """
-    Create a new note and attach it to a subject.
+    Create a new note and save it permanently
+    in the SQLite database.
     """
-
-    global next_note_id
 
     print()
     print("CREATE NOTE")
@@ -75,25 +78,67 @@ def create_note():
         print("Note content cannot be empty.")
         return
 
-    note = {
-        "id": next_note_id,
-        "subject": subject,
-        "title": title,
-        "content": content
-    }
+    connection = get_connection()
 
-    notes.append(note)
+    try:
+        connection.execute(
+            """
+            INSERT INTO notes (
+                subject_id,
+                title,
+                content
+            )
+            VALUES (?, ?, ?)
+            """,
+            (
+                subject["id"],
+                title,
+                content
+            )
+        )
 
-    print()
-    print(f'Note "{title}" was created successfully.')
+        connection.commit()
 
-    next_note_id += 1
+        print()
+        print(f'Note "{title}" was created successfully.')
+
+    finally:
+        connection.close()
+
+
+def get_notes():
+    """
+    Get a short list of all notes.
+    """
+
+    connection = get_connection()
+
+    try:
+        notes = connection.execute(
+            """
+            SELECT
+                notes.note_id,
+                notes.title,
+                subjects.name AS subject_name
+            FROM notes
+            JOIN subjects
+                ON notes.subject_id = subjects.subject_id
+            ORDER BY notes.note_id
+            """
+        ).fetchall()
+
+        return notes
+
+    finally:
+        connection.close()
 
 
 def view_notes():
     """
-    Display a short list of every saved note.
+    Display all saved notes.
     """
+
+    notes = get_notes()
 
     print()
     print("YOUR NOTES")
@@ -105,31 +150,47 @@ def view_notes():
 
     for note in notes:
         print(
-            f'ID {note["id"]}: '
+            f'ID {note["note_id"]}: '
             f'{note["title"]} '
-            f'[{note["subject"]}]'
+            f'[{note["subject_name"]}]'
         )
 
 
 def find_note(note_id):
     """
-    Search for one note using its ID.
-
-    Returns the note if found.
-    Returns None if not found.
+    Find one note using its ID.
     """
 
-    for note in notes:
-        if note["id"] == note_id:
-            return note
+    connection = get_connection()
 
-    return None
+    try:
+        note = connection.execute(
+            """
+            SELECT
+                notes.note_id,
+                notes.subject_id,
+                notes.title,
+                notes.content,
+                notes.created_at,
+                notes.updated_at,
+                subjects.name AS subject_name
+            FROM notes
+            JOIN subjects
+                ON notes.subject_id = subjects.subject_id
+            WHERE notes.note_id = ?
+            """,
+            (note_id,)
+        ).fetchone()
+
+        return note
+
+    finally:
+        connection.close()
 
 
 def get_note_id():
     """
-    Ask the user for a note ID and make sure
-    they entered a whole number.
+    Ask the user for a note ID.
     """
 
     note_id_text = input("Enter note ID: ").strip()
@@ -143,8 +204,10 @@ def get_note_id():
 
 def read_note():
     """
-    Display the complete contents of one note.
+    Read one complete note.
     """
+
+    notes = get_notes()
 
     if len(notes) == 0:
         print()
@@ -170,16 +233,21 @@ def read_note():
     print("========================================")
     print(note["title"])
     print("========================================")
-    print(f'Subject: {note["subject"]}')
+    print(f'Subject: {note["subject_name"]}')
     print()
     print(note["content"])
+    print()
+    print(f'Created: {note["created_at"]}')
+    print(f'Updated: {note["updated_at"]}')
     print("========================================")
 
 
 def edit_note():
     """
-    Change the title or content of an existing note.
+    Edit an existing note.
     """
+
+    notes = get_notes()
 
     if len(notes) == 0:
         print()
@@ -208,8 +276,8 @@ def edit_note():
         "Enter a new title, or press Enter to keep the current title: "
     ).strip()
 
-    if new_title != "":
-        note["title"] = new_title
+    if new_title == "":
+        new_title = note["title"]
 
     print()
     print("Current content:")
@@ -219,17 +287,43 @@ def edit_note():
         "Enter new content, or press Enter to keep the current content: "
     ).strip()
 
-    if new_content != "":
-        note["content"] = new_content
+    if new_content == "":
+        new_content = note["content"]
 
-    print()
-    print("Note updated successfully.")
+    connection = get_connection()
+
+    try:
+        connection.execute(
+            """
+            UPDATE notes
+            SET
+                title = ?,
+                content = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE note_id = ?
+            """,
+            (
+                new_title,
+                new_content,
+                note_id
+            )
+        )
+
+        connection.commit()
+
+        print()
+        print("Note updated successfully.")
+
+    finally:
+        connection.close()
 
 
 def delete_note():
     """
-    Permanently remove one note from the current session.
+    Delete one note from the database.
     """
+
+    notes = get_notes()
 
     if len(notes) == 0:
         print()
@@ -262,14 +356,28 @@ def delete_note():
         print("Deletion cancelled.")
         return
 
-    notes.remove(note)
+    connection = get_connection()
 
-    print("Note deleted successfully.")
+    try:
+        connection.execute(
+            """
+            DELETE FROM notes
+            WHERE note_id = ?
+            """,
+            (note_id,)
+        )
+
+        connection.commit()
+
+        print("Note deleted successfully.")
+
+    finally:
+        connection.close()
 
 
 def notes_menu():
     """
-    Display the Notes menu until the user chooses Back.
+    Display the Notes menu.
     """
 
     while True:
@@ -309,4 +417,3 @@ def notes_menu():
             print()
             print("That is not a valid option.")
             print("Please choose 0, 1, 2, 3, 4, or 5.")
-            

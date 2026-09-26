@@ -1,6 +1,7 @@
 # main.py
 # Main program for StudyVault CL
 
+from database import initialize_database
 from subjects import add_subject, view_subjects
 from notes import notes_menu
 
@@ -18,6 +19,11 @@ def show_menu():
 
 
 def main():
+
+    # Make sure our database and tables exist
+    # before StudyVault starts.
+    initialize_database()
+
     program_running = True
 
     while program_running:
@@ -37,6 +43,7 @@ def main():
         elif choice == "0":
             print()
             print("Thank you for using StudyVault CL.")
+            print("Your information has been saved.")
             print("Goodbye!")
 
             program_running = False
@@ -48,4 +55,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() 
+    main()
