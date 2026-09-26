@@ -1,0 +1,2454 @@
+############################################################
+# STUDYVAULT CL
+# Complete Project Pseudocode
+#
+# PURPOSE:
+# StudyVault CL is a command-line study management system.
+#
+# It allows a student to:
+# - create subjects
+# - save notes
+# - create flashcards
+# - review flashcards using spaced repetition
+# - take quizzes
+# - track study time
+# - create study goals
+# - search everything
+# - view progress statistics
+# - export their information
+#
+# FUTURE PROGRAMMING LANGUAGE:
+# Python
+#
+# FUTURE DATABASE:
+# SQLite
+############################################################
+
+
+############################################################
+# SECTION 1
+# START PROGRAM
+############################################################
+
+BEGIN PROGRAM
+
+    DISPLAY "========================================"
+    DISPLAY "              STUDYVAULT CL             "
+    DISPLAY "========================================"
+
+    CALL initialize_database()
+
+    CALL show_welcome_message()
+
+    CALL main_menu()
+
+END PROGRAM
+
+
+
+############################################################
+# SECTION 2
+# DATABASE INITIALIZATION
+############################################################
+
+FUNCTION initialize_database()
+
+    # Think of the database as a digital filing cabinet.
+    # Each TABLE is like a drawer inside the cabinet.
+
+    CONNECT TO DATABASE "studyvault.db"
+
+    IF database connection fails THEN
+        DISPLAY "StudyVault could not open the database."
+        STOP PROGRAM
+    END IF
+
+
+    ########################################################
+    # SUBJECTS TABLE
+    ########################################################
+
+    CREATE subjects TABLE IF IT DOES NOT EXIST
+
+        subject_id
+        subject_name
+        description
+        created_date
+
+    END TABLE
+
+
+    ########################################################
+    # NOTES TABLE
+    ########################################################
+
+    CREATE notes TABLE IF IT DOES NOT EXIST
+
+        note_id
+        subject_id
+        title
+        content
+        created_date
+        updated_date
+
+    END TABLE
+
+
+    ########################################################
+    # FLASHCARDS TABLE
+    ########################################################
+
+    CREATE flashcards TABLE IF IT DOES NOT EXIST
+
+        flashcard_id
+        subject_id
+        question
+        answer
+
+        repetitions
+        interval_days
+        ease_factor
+
+        next_review_date
+
+        created_date
+
+    END TABLE
+
+
+    ########################################################
+    # FLASHCARD REVIEW HISTORY TABLE
+    ########################################################
+
+    CREATE flashcard_reviews TABLE IF IT DOES NOT EXIST
+
+        review_id
+        flashcard_id
+        rating
+        review_date
+
+    END TABLE
+
+
+    ########################################################
+    # QUIZ RESULTS TABLE
+    ########################################################
+
+    CREATE quiz_results TABLE IF IT DOES NOT EXIST
+
+        quiz_id
+        subject_id
+        correct_answers
+        total_questions
+        percentage
+        quiz_date
+
+    END TABLE
+
+
+    ########################################################
+    # STUDY SESSION TABLE
+    ########################################################
+
+    CREATE study_sessions TABLE IF IT DOES NOT EXIST
+
+        session_id
+        subject_id
+        minutes_studied
+        session_date
+        notes
+
+    END TABLE
+
+
+    ########################################################
+    # GOALS TABLE
+    ########################################################
+
+    CREATE goals TABLE IF IT DOES NOT EXIST
+
+        goal_id
+        subject_id
+        goal_description
+        deadline
+        completed
+        created_date
+
+    END TABLE
+
+
+    SAVE database changes
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 3
+# WELCOME SCREEN
+############################################################
+
+FUNCTION show_welcome_message()
+
+    GET today's date
+
+    GET total number of subjects
+
+    GET number of flashcards due today
+
+    GET study minutes completed today
+
+    DISPLAY ""
+    DISPLAY "Welcome to StudyVault!"
+    DISPLAY "Date: " + today's date
+    DISPLAY ""
+
+    DISPLAY "Subjects: " + total subjects
+    DISPLAY "Flashcards due: " + due flashcards
+    DISPLAY "Study minutes today: " + today's study minutes
+    DISPLAY ""
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 4
+# MAIN MENU
+############################################################
+
+FUNCTION main_menu()
+
+    SET program_running = TRUE
+
+
+    WHILE program_running = TRUE
+
+        DISPLAY ""
+        DISPLAY "========================================"
+        DISPLAY "               MAIN MENU                "
+        DISPLAY "========================================"
+
+        DISPLAY "1. Subjects"
+        DISPLAY "2. Notes"
+        DISPLAY "3. Flashcards"
+        DISPLAY "4. Review Flashcards"
+        DISPLAY "5. Quiz Mode"
+        DISPLAY "6. Study Sessions"
+        DISPLAY "7. Search Vault"
+        DISPLAY "8. Goals"
+        DISPLAY "9. Progress Dashboard"
+        DISPLAY "10. Export Data"
+        DISPLAY "0. Exit"
+
+        ASK user:
+            "Choose an option: "
+
+        STORE answer AS choice
+
+
+        IF choice = "1" THEN
+
+            CALL subjects_menu()
+
+
+        ELSE IF choice = "2" THEN
+
+            CALL notes_menu()
+
+
+        ELSE IF choice = "3" THEN
+
+            CALL flashcards_menu()
+
+
+        ELSE IF choice = "4" THEN
+
+            CALL review_flashcards()
+
+
+        ELSE IF choice = "5" THEN
+
+            CALL quiz_menu()
+
+
+        ELSE IF choice = "6" THEN
+
+            CALL study_sessions_menu()
+
+
+        ELSE IF choice = "7" THEN
+
+            CALL search_vault()
+
+
+        ELSE IF choice = "8" THEN
+
+            CALL goals_menu()
+
+
+        ELSE IF choice = "9" THEN
+
+            CALL progress_dashboard()
+
+
+        ELSE IF choice = "10" THEN
+
+            CALL export_data()
+
+
+        ELSE IF choice = "0" THEN
+
+            DISPLAY "Saving your StudyVault..."
+
+            SAVE database
+
+            DISPLAY "Goodbye!"
+
+            SET program_running = FALSE
+
+
+        ELSE
+
+            DISPLAY "That is not a valid option."
+            DISPLAY "Please choose a number from the menu."
+
+        END IF
+
+    END WHILE
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 5
+# SUBJECT MANAGEMENT
+############################################################
+
+FUNCTION subjects_menu()
+
+    DISPLAY ""
+    DISPLAY "SUBJECTS"
+    DISPLAY "1. Add Subject"
+    DISPLAY "2. View Subjects"
+    DISPLAY "3. View Subject Details"
+    DISPLAY "4. Rename Subject"
+    DISPLAY "5. Delete Subject"
+    DISPLAY "0. Main Menu"
+
+    ASK user for choice
+
+    IF choice = "1" THEN
+
+        CALL add_subject()
+
+    ELSE IF choice = "2" THEN
+
+        CALL view_subjects()
+
+    ELSE IF choice = "3" THEN
+
+        CALL view_subject_details()
+
+    ELSE IF choice = "4" THEN
+
+        CALL rename_subject()
+
+    ELSE IF choice = "5" THEN
+
+        CALL delete_subject()
+
+    ELSE IF choice = "0" THEN
+
+        RETURN TO main_menu
+
+    ELSE
+
+        DISPLAY "Invalid choice."
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# ADD SUBJECT
+############################################################
+
+FUNCTION add_subject()
+
+    ASK user:
+        "Enter the subject name:"
+
+    STORE answer AS subject_name
+
+
+    WHILE subject_name is empty
+
+        DISPLAY "Subject name cannot be empty."
+
+        ASK user again
+
+    END WHILE
+
+
+    SEARCH database for subject with same name
+
+
+    IF subject already exists THEN
+
+        DISPLAY "That subject already exists."
+
+        RETURN
+
+    END IF
+
+
+    ASK user:
+        "Enter a short description:"
+
+    STORE answer AS description
+
+
+    GET today's date
+
+
+    INSERT into subjects:
+
+        subject_name
+        description
+        today's date
+
+
+    SAVE database
+
+
+    DISPLAY "Subject created successfully."
+
+END FUNCTION
+
+
+
+############################################################
+# VIEW SUBJECTS
+############################################################
+
+FUNCTION view_subjects()
+
+    GET all subjects from database
+
+    SORT subjects alphabetically
+
+
+    IF subject list is empty THEN
+
+        DISPLAY "You do not have any subjects yet."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY "YOUR SUBJECTS"
+
+
+    FOR EACH subject IN subjects
+
+        DISPLAY subject ID
+        DISPLAY subject name
+        DISPLAY description
+        DISPLAY "----------------------"
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# VIEW SUBJECT DETAILS
+############################################################
+
+FUNCTION view_subject_details()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+    FIND subject using subject ID
+
+
+    IF subject does not exist THEN
+
+        DISPLAY "Subject not found."
+
+        RETURN
+
+    END IF
+
+
+    COUNT notes belonging to subject
+
+    COUNT flashcards belonging to subject
+
+    COUNT study sessions belonging to subject
+
+    ADD total study minutes
+
+    CALCULATE average quiz score
+
+
+    DISPLAY ""
+    DISPLAY subject name
+    DISPLAY subject description
+
+    DISPLAY "Notes: " + note count
+
+    DISPLAY "Flashcards: " + flashcard count
+
+    DISPLAY "Study minutes: " + total study minutes
+
+    DISPLAY "Average quiz score: " + average quiz score
+
+END FUNCTION
+
+
+
+############################################################
+# RENAME SUBJECT
+############################################################
+
+FUNCTION rename_subject()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+    FIND subject
+
+
+    IF subject not found THEN
+
+        DISPLAY "Subject not found."
+
+        RETURN
+
+    END IF
+
+
+    ASK user for new name
+
+    VALIDATE new name
+
+
+    UPDATE subject name
+
+    SAVE database
+
+
+    DISPLAY "Subject renamed."
+
+END FUNCTION
+
+
+
+############################################################
+# DELETE SUBJECT
+############################################################
+
+FUNCTION delete_subject()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+    FIND subject
+
+
+    IF subject not found THEN
+
+        DISPLAY "Subject not found."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY "WARNING"
+
+    DISPLAY "Deleting this subject may also remove its notes,"
+    DISPLAY "flashcards, quizzes, study sessions, and goals."
+
+    ASK:
+        "Type DELETE to confirm:"
+
+
+    IF user input does NOT equal "DELETE" THEN
+
+        DISPLAY "Deletion cancelled."
+
+        RETURN
+
+    END IF
+
+
+    DELETE related notes
+
+    DELETE related flashcards
+
+    DELETE related quiz results
+
+    DELETE related study sessions
+
+    DELETE related goals
+
+    DELETE subject
+
+
+    SAVE database
+
+
+    DISPLAY "Subject deleted."
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 6
+# NOTES SYSTEM
+############################################################
+
+FUNCTION notes_menu()
+
+    DISPLAY ""
+    DISPLAY "NOTES"
+    DISPLAY "1. Create Note"
+    DISPLAY "2. View Notes"
+    DISPLAY "3. Read Note"
+    DISPLAY "4. Edit Note"
+    DISPLAY "5. Delete Note"
+    DISPLAY "0. Main Menu"
+
+    ASK user for choice
+
+
+    IF choice = "1" THEN
+
+        CALL create_note()
+
+    ELSE IF choice = "2" THEN
+
+        CALL view_notes()
+
+    ELSE IF choice = "3" THEN
+
+        CALL read_note()
+
+    ELSE IF choice = "4" THEN
+
+        CALL edit_note()
+
+    ELSE IF choice = "5" THEN
+
+        CALL delete_note()
+
+    ELSE
+
+        RETURN
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# CREATE NOTE
+############################################################
+
+FUNCTION create_note()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+
+    IF subject does not exist THEN
+
+        DISPLAY "Subject does not exist."
+
+        RETURN
+
+    END IF
+
+
+    ASK user:
+        "Note title:"
+
+    STORE answer AS title
+
+
+    ASK user:
+        "Write your note:"
+
+    STORE answer AS content
+
+
+    IF title is empty OR content is empty THEN
+
+        DISPLAY "Title and content are required."
+
+        RETURN
+
+    END IF
+
+
+    GET current date and time
+
+
+    INSERT note into database with:
+
+        subject ID
+        title
+        content
+        created date
+        updated date
+
+
+    SAVE database
+
+
+    DISPLAY "Note saved."
+
+END FUNCTION
+
+
+
+############################################################
+# VIEW NOTES
+############################################################
+
+FUNCTION view_notes()
+
+    ASK:
+        "View notes from one subject or all subjects?"
+
+    IF user chooses one subject THEN
+
+        ASK for subject ID
+
+        GET notes belonging to subject
+
+    ELSE
+
+        GET all notes
+
+    END IF
+
+
+    SORT notes by most recently updated
+
+
+    FOR EACH note
+
+        DISPLAY note ID
+
+        DISPLAY title
+
+        DISPLAY subject
+
+        DISPLAY updated date
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# READ NOTE
+############################################################
+
+FUNCTION read_note()
+
+    CALL view_notes()
+
+    ASK user for note ID
+
+
+    FIND note
+
+
+    IF note does not exist THEN
+
+        DISPLAY "Note not found."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY note title
+
+    DISPLAY subject name
+
+    DISPLAY note content
+
+    DISPLAY created date
+
+    DISPLAY updated date
+
+END FUNCTION
+
+
+
+############################################################
+# EDIT NOTE
+############################################################
+
+FUNCTION edit_note()
+
+    CALL view_notes()
+
+    ASK user for note ID
+
+    FIND note
+
+
+    IF note does not exist THEN
+
+        DISPLAY "Note not found."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY current title
+
+    ASK for new title
+
+
+    DISPLAY current content
+
+    ASK for new content
+
+
+    UPDATE title
+
+    UPDATE content
+
+    UPDATE updated date
+
+
+    SAVE database
+
+
+    DISPLAY "Note updated."
+
+END FUNCTION
+
+
+
+############################################################
+# DELETE NOTE
+############################################################
+
+FUNCTION delete_note()
+
+    ASK user for note ID
+
+    FIND note
+
+
+    IF note does not exist THEN
+
+        DISPLAY "Note not found."
+
+        RETURN
+
+    END IF
+
+
+    ASK:
+        "Delete this note? yes/no"
+
+
+    IF answer = "yes" THEN
+
+        DELETE note
+
+        SAVE database
+
+        DISPLAY "Note deleted."
+
+    ELSE
+
+        DISPLAY "Deletion cancelled."
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 7
+# FLASHCARD SYSTEM
+############################################################
+
+FUNCTION flashcards_menu()
+
+    DISPLAY ""
+    DISPLAY "FLASHCARDS"
+
+    DISPLAY "1. Create Flashcard"
+    DISPLAY "2. View Flashcards"
+    DISPLAY "3. Edit Flashcard"
+    DISPLAY "4. Delete Flashcard"
+    DISPLAY "5. Show Due Flashcards"
+    DISPLAY "0. Main Menu"
+
+
+    ASK user for choice
+
+
+    IF choice = "1" THEN
+
+        CALL create_flashcard()
+
+    ELSE IF choice = "2" THEN
+
+        CALL view_flashcards()
+
+    ELSE IF choice = "3" THEN
+
+        CALL edit_flashcard()
+
+    ELSE IF choice = "4" THEN
+
+        CALL delete_flashcard()
+
+    ELSE IF choice = "5" THEN
+
+        CALL show_due_flashcards()
+
+    ELSE
+
+        RETURN
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# CREATE FLASHCARD
+############################################################
+
+FUNCTION create_flashcard()
+
+    CALL view_subjects()
+
+    ASK for subject ID
+
+
+    IF subject does not exist THEN
+
+        DISPLAY "Subject not found."
+
+        RETURN
+
+    END IF
+
+
+    ASK:
+        "Question:"
+
+    STORE answer AS question
+
+
+    ASK:
+        "Answer:"
+
+    STORE answer AS answer
+
+
+    IF question is empty OR answer is empty THEN
+
+        DISPLAY "Question and answer cannot be empty."
+
+        RETURN
+
+    END IF
+
+
+    SET repetitions = 0
+
+    SET interval_days = 0
+
+    SET ease_factor = 2.5
+
+    SET next_review_date = today's date
+
+
+    INSERT flashcard into database
+
+
+    SAVE database
+
+
+    DISPLAY "Flashcard created."
+
+END FUNCTION
+
+
+
+############################################################
+# VIEW FLASHCARDS
+############################################################
+
+FUNCTION view_flashcards()
+
+    ASK user for subject ID
+
+    GET all flashcards belonging to subject
+
+
+    IF there are no flashcards THEN
+
+        DISPLAY "No flashcards found."
+
+        RETURN
+
+    END IF
+
+
+    FOR EACH flashcard
+
+        DISPLAY flashcard ID
+        DISPLAY question
+        DISPLAY next review date
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 8
+# SPACED REPETITION
+############################################################
+
+# Spaced repetition means:
+#
+# Easy cards wait longer before appearing again.
+# Difficult cards appear sooner.
+#
+# StudyVault remembers how well the student knows each card.
+
+
+FUNCTION review_flashcards()
+
+    GET today's date
+
+
+    FIND flashcards WHERE:
+
+        next_review_date <= today's date
+
+
+    SORT flashcards by next_review_date
+
+
+    IF no cards are due THEN
+
+        DISPLAY "Great job!"
+        DISPLAY "You have no flashcards due today."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY number of cards due
+
+
+    FOR EACH flashcard IN due flashcards
+
+        DISPLAY ""
+        DISPLAY "QUESTION:"
+        DISPLAY flashcard question
+
+
+        ASK user:
+            "Press Enter when ready to reveal the answer."
+
+
+        DISPLAY ""
+        DISPLAY "ANSWER:"
+        DISPLAY flashcard answer
+
+
+        DISPLAY ""
+        DISPLAY "How well did you remember it?"
+
+        DISPLAY "1 = Again"
+        DISPLAY "2 = Hard"
+        DISPLAY "3 = Good"
+        DISPLAY "4 = Easy"
+
+
+        ASK user for rating
+
+
+        WHILE rating is not 1, 2, 3, or 4
+
+            DISPLAY "Please choose 1, 2, 3, or 4."
+
+            ASK again
+
+        END WHILE
+
+
+        CALL calculate_next_review(flashcard, rating)
+
+
+        SAVE review history
+
+
+        UPDATE flashcard in database
+
+
+    END FOR
+
+
+    DISPLAY "Review session complete."
+
+END FUNCTION
+
+
+
+############################################################
+# SPACED REPETITION ALGORITHM
+############################################################
+
+FUNCTION calculate_next_review(card, rating)
+
+    ########################################################
+    # RATING = AGAIN
+    ########################################################
+
+    IF rating = 1 THEN
+
+        SET card.repetitions = 0
+
+        SET card.interval_days = 1
+
+        DECREASE card.ease_factor BY 0.20
+
+
+    ########################################################
+    # RATING = HARD
+    ########################################################
+
+    ELSE IF rating = 2 THEN
+
+        SET card.repetitions =
+            card.repetitions + 1
+
+
+        IF card.interval_days < 1 THEN
+
+            SET card.interval_days = 1
+
+        ELSE
+
+            SET card.interval_days =
+                ROUND(card.interval_days * 1.2)
+
+        END IF
+
+
+        DECREASE card.ease_factor BY 0.15
+
+
+    ########################################################
+    # RATING = GOOD
+    ########################################################
+
+    ELSE IF rating = 3 THEN
+
+        INCREASE card.repetitions BY 1
+
+
+        IF repetitions = 1 THEN
+
+            SET interval_days = 1
+
+        ELSE IF repetitions = 2 THEN
+
+            SET interval_days = 3
+
+        ELSE
+
+            SET interval_days =
+                ROUND(
+                    interval_days *
+                    ease_factor
+                )
+
+        END IF
+
+
+    ########################################################
+    # RATING = EASY
+    ########################################################
+
+    ELSE IF rating = 4 THEN
+
+        INCREASE repetitions BY 1
+
+        INCREASE ease_factor BY 0.15
+
+
+        IF interval_days < 1 THEN
+
+            SET interval_days = 4
+
+        ELSE
+
+            SET interval_days =
+                ROUND(
+                    interval_days *
+                    ease_factor *
+                    1.3
+                )
+
+        END IF
+
+    END IF
+
+
+    ########################################################
+    # Prevent ease factor from becoming too small
+    ########################################################
+
+    IF ease_factor < 1.3 THEN
+
+        SET ease_factor = 1.3
+
+    END IF
+
+
+    SET next_review_date =
+        today's date + interval_days
+
+
+    RETURN updated card
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 9
+# QUIZ SYSTEM
+############################################################
+
+FUNCTION quiz_menu()
+
+    DISPLAY ""
+    DISPLAY "QUIZ MODE"
+
+    DISPLAY "1. Start Quiz"
+    DISPLAY "2. View Quiz History"
+    DISPLAY "0. Main Menu"
+
+    ASK user for option
+
+
+    IF option = "1" THEN
+
+        CALL start_quiz()
+
+    ELSE IF option = "2" THEN
+
+        CALL quiz_history()
+
+    ELSE
+
+        RETURN
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# START QUIZ
+############################################################
+
+FUNCTION start_quiz()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+
+    GET all flashcards belonging to subject
+
+
+    IF number of flashcards = 0 THEN
+
+        DISPLAY "You need flashcards before taking a quiz."
+
+        RETURN
+
+    END IF
+
+
+    ASK:
+        "How many questions would you like?"
+
+
+    VALIDATE number
+
+
+    IF requested questions > available flashcards THEN
+
+        SET question amount =
+            number of available flashcards
+
+    END IF
+
+
+    RANDOMLY SHUFFLE flashcards
+
+
+    SELECT first requested number of flashcards
+
+
+    SET correct_answers = 0
+
+    SET total_questions = number selected
+
+
+    FOR EACH flashcard IN selected cards
+
+        DISPLAY flashcard question
+
+
+        ASK user for answer
+
+
+        NORMALIZE user's answer
+
+        NORMALIZE correct answer
+
+
+        IF user's answer =
+           correct answer THEN
+
+            DISPLAY "Correct!"
+
+            INCREASE correct_answers BY 1
+
+
+        ELSE
+
+            DISPLAY "Not quite."
+
+            DISPLAY "Correct answer:"
+            DISPLAY flashcard answer
+
+        END IF
+
+    END FOR
+
+
+    CALCULATE:
+
+        percentage =
+        correct_answers /
+        total_questions *
+        100
+
+
+    DISPLAY ""
+    DISPLAY "QUIZ COMPLETE"
+
+    DISPLAY "Correct:"
+    DISPLAY correct_answers
+
+    DISPLAY "Total:"
+    DISPLAY total_questions
+
+    DISPLAY "Score:"
+    DISPLAY percentage + "%"
+
+
+    SAVE result to quiz_results table
+
+END FUNCTION
+
+
+
+############################################################
+# NORMALIZE ANSWER
+############################################################
+
+FUNCTION normalize_answer(answer)
+
+    CONVERT answer to lowercase
+
+    REMOVE spaces from beginning and end
+
+    REMOVE unnecessary punctuation
+
+    RETURN cleaned answer
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 10
+# STUDY TIMER / SESSION TRACKER
+############################################################
+
+FUNCTION study_sessions_menu()
+
+    DISPLAY "1. Log Study Session"
+    DISPLAY "2. View Study History"
+    DISPLAY "3. View Total Study Time"
+    DISPLAY "0. Main Menu"
+
+    ASK user for choice
+
+
+    IF choice = "1" THEN
+
+        CALL log_study_session()
+
+    ELSE IF choice = "2" THEN
+
+        CALL study_history()
+
+    ELSE IF choice = "3" THEN
+
+        CALL study_time_summary()
+
+    ELSE
+
+        RETURN
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# LOG STUDY SESSION
+############################################################
+
+FUNCTION log_study_session()
+
+    CALL view_subjects()
+
+    ASK user for subject ID
+
+
+    ASK:
+        "How many minutes did you study?"
+
+
+    STORE answer AS minutes
+
+
+    WHILE minutes is not a positive number
+
+        DISPLAY "Please enter a number greater than zero."
+
+        ASK again
+
+    END WHILE
+
+
+    ASK:
+        "What did you work on?"
+
+    STORE answer AS notes
+
+
+    GET today's date
+
+
+    INSERT session into database
+
+
+    SAVE database
+
+
+    DISPLAY "Study session saved."
+
+END FUNCTION
+
+
+
+############################################################
+# STUDY HISTORY
+############################################################
+
+FUNCTION study_history()
+
+    GET study sessions
+
+    SORT newest to oldest
+
+
+    FOR EACH session
+
+        DISPLAY session date
+
+        DISPLAY subject
+
+        DISPLAY minutes
+
+        DISPLAY session notes
+
+        DISPLAY "------------------------"
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 11
+# GLOBAL SEARCH
+############################################################
+
+FUNCTION search_vault()
+
+    ASK:
+        "What would you like to search for?"
+
+
+    STORE answer AS search_term
+
+
+    CONVERT search_term to lowercase
+
+
+    CREATE empty list called results
+
+
+    ########################################################
+    # SEARCH SUBJECTS
+    ########################################################
+
+    FOR EACH subject
+
+        IF lowercase subject name
+           CONTAINS search_term THEN
+
+            ADD subject to results
+
+        END IF
+
+    END FOR
+
+
+    ########################################################
+    # SEARCH NOTES
+    ########################################################
+
+    FOR EACH note
+
+        IF lowercase note title
+           CONTAINS search_term
+
+           OR
+
+           lowercase note content
+           CONTAINS search_term THEN
+
+            ADD note to results
+
+        END IF
+
+    END FOR
+
+
+    ########################################################
+    # SEARCH FLASHCARDS
+    ########################################################
+
+    FOR EACH flashcard
+
+        IF lowercase question
+           CONTAINS search_term
+
+           OR
+
+           lowercase answer
+           CONTAINS search_term THEN
+
+            ADD flashcard to results
+
+        END IF
+
+    END FOR
+
+
+    ########################################################
+    # SHOW RESULTS
+    ########################################################
+
+    IF results is empty THEN
+
+        DISPLAY "No results found."
+
+        RETURN
+
+    END IF
+
+
+    DISPLAY number of results
+
+
+    FOR EACH result
+
+        DISPLAY result type
+        DISPLAY result title or question
+        DISPLAY subject
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 12
+# GOAL TRACKER
+############################################################
+
+FUNCTION goals_menu()
+
+    DISPLAY "1. Create Goal"
+    DISPLAY "2. View Active Goals"
+    DISPLAY "3. Complete Goal"
+    DISPLAY "4. Delete Goal"
+    DISPLAY "0. Main Menu"
+
+    ASK for choice
+
+
+    IF choice = "1" THEN
+
+        CALL create_goal()
+
+    ELSE IF choice = "2" THEN
+
+        CALL view_goals()
+
+    ELSE IF choice = "3" THEN
+
+        CALL complete_goal()
+
+    ELSE IF choice = "4" THEN
+
+        CALL delete_goal()
+
+    ELSE
+
+        RETURN
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# CREATE GOAL
+############################################################
+
+FUNCTION create_goal()
+
+    ASK user for subject
+
+
+    ASK:
+        "What is your goal?"
+
+
+    STORE goal description
+
+
+    ASK:
+        "Deadline YYYY-MM-DD:"
+
+
+    VALIDATE date
+
+
+    SET completed = FALSE
+
+
+    SAVE goal to database
+
+
+    DISPLAY "Goal created."
+
+END FUNCTION
+
+
+
+############################################################
+# COMPLETE GOAL
+############################################################
+
+FUNCTION complete_goal()
+
+    SHOW incomplete goals
+
+
+    ASK user for goal ID
+
+
+    FIND goal
+
+
+    IF goal exists THEN
+
+        SET completed = TRUE
+
+        SAVE database
+
+        DISPLAY "Congratulations!"
+        DISPLAY "Goal completed."
+
+    ELSE
+
+        DISPLAY "Goal not found."
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 13
+# ANALYTICS DASHBOARD
+############################################################
+
+FUNCTION progress_dashboard()
+
+    DISPLAY ""
+    DISPLAY "========================================"
+    DISPLAY "           PROGRESS DASHBOARD           "
+    DISPLAY "========================================"
+
+
+    CALCULATE total subjects
+
+    CALCULATE total notes
+
+    CALCULATE total flashcards
+
+    CALCULATE total study sessions
+
+    CALCULATE total study minutes
+
+    CALCULATE number of quizzes taken
+
+    CALCULATE overall average quiz score
+
+    CALCULATE flashcards reviewed
+
+    CALCULATE goals completed
+
+
+    DISPLAY "Subjects:"
+    DISPLAY total subjects
+
+    DISPLAY "Notes:"
+    DISPLAY total notes
+
+    DISPLAY "Flashcards:"
+    DISPLAY total flashcards
+
+    DISPLAY "Study Sessions:"
+    DISPLAY total study sessions
+
+    DISPLAY "Study Minutes:"
+    DISPLAY total study minutes
+
+    DISPLAY "Quizzes:"
+    DISPLAY quizzes taken
+
+    DISPLAY "Average Quiz Score:"
+    DISPLAY average score
+
+    DISPLAY "Cards Reviewed:"
+    DISPLAY reviewed cards
+
+    DISPLAY "Goals Completed:"
+    DISPLAY completed goals
+
+
+    CALL calculate_subject_statistics()
+
+    CALL calculate_study_streak()
+
+END FUNCTION
+
+
+
+############################################################
+# SUBJECT STATISTICS
+############################################################
+
+FUNCTION calculate_subject_statistics()
+
+    GET all subjects
+
+
+    FOR EACH subject
+
+        CALCULATE:
+
+            number of notes
+
+            number of flashcards
+
+            study minutes
+
+            quiz average
+
+
+        DISPLAY subject name
+
+        DISPLAY notes count
+
+        DISPLAY flashcard count
+
+        DISPLAY study time
+
+        DISPLAY average quiz score
+
+    END FOR
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 14
+# STUDY STREAK ALGORITHM
+############################################################
+
+FUNCTION calculate_study_streak()
+
+    GET all unique study dates
+
+    SORT study dates from newest to oldest
+
+
+    IF there are no study dates THEN
+
+        DISPLAY "Current streak: 0 days"
+
+        RETURN
+
+    END IF
+
+
+    SET streak = 0
+
+    SET expected_date = today
+
+
+    FOR EACH date IN sorted study dates
+
+        IF date = expected_date THEN
+
+            INCREASE streak BY 1
+
+            SET expected_date =
+                expected_date - 1 day
+
+        ELSE IF date = expected_date + 1 day THEN
+
+            CONTINUE
+
+        ELSE
+
+            BREAK loop
+
+        END IF
+
+    END FOR
+
+
+    DISPLAY "Current study streak:"
+    DISPLAY streak + " days"
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 15
+# EXPORT SYSTEM
+############################################################
+
+FUNCTION export_data()
+
+    DISPLAY "EXPORT DATA"
+
+    DISPLAY "1. Export Subjects"
+    DISPLAY "2. Export Notes"
+    DISPLAY "3. Export Flashcards"
+    DISPLAY "4. Export Study History"
+    DISPLAY "5. Export Everything"
+
+    ASK user for option
+
+
+    IF user chooses subjects THEN
+
+        GET subjects
+
+        CREATE CSV file
+
+        WRITE subjects into CSV
+
+
+    ELSE IF user chooses notes THEN
+
+        GET notes
+
+        CREATE CSV file
+
+        WRITE notes into CSV
+
+
+    ELSE IF user chooses flashcards THEN
+
+        GET flashcards
+
+        CREATE CSV file
+
+        WRITE flashcards into CSV
+
+
+    ELSE IF user chooses study history THEN
+
+        GET study sessions
+
+        CREATE CSV file
+
+        WRITE sessions into CSV
+
+
+    ELSE IF user chooses everything THEN
+
+        CREATE export folder
+
+        EXPORT each type of data
+
+    END IF
+
+
+    DISPLAY "Export completed."
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 16
+# INPUT VALIDATION
+############################################################
+
+FUNCTION get_valid_integer(message)
+
+    REPEAT
+
+        ASK user using message
+
+        TRY converting input into integer
+
+
+        IF conversion succeeds THEN
+
+            RETURN integer
+
+        ELSE
+
+            DISPLAY "Please enter a whole number."
+
+        END IF
+
+    UNTIL valid integer entered
+
+END FUNCTION
+
+
+
+############################################################
+# DATE VALIDATION
+############################################################
+
+FUNCTION validate_date(date_text)
+
+    TRY converting text to date
+
+    IF successful THEN
+
+        RETURN TRUE
+
+    ELSE
+
+        DISPLAY "Use YYYY-MM-DD format."
+
+        RETURN FALSE
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 17
+# ERROR HANDLING
+############################################################
+
+FUNCTION safe_database_operation(operation)
+
+    TRY
+
+        PERFORM database operation
+
+        SAVE database
+
+    IF database error occurs THEN
+
+        DISPLAY:
+            "A database error occurred."
+
+        RECORD error in log file
+
+        RETURN FALSE
+
+    END TRY
+
+
+    RETURN TRUE
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 18
+# TESTING PLAN
+############################################################
+
+FUNCTION test_add_subject()
+
+    CREATE test subject
+
+    SEARCH database
+
+    VERIFY subject exists
+
+END FUNCTION
+
+
+FUNCTION test_duplicate_subject()
+
+    CREATE subject named "Calculus"
+
+    TRY creating another subject named "Calculus"
+
+    VERIFY duplicate is rejected
+
+END FUNCTION
+
+
+FUNCTION test_create_flashcard()
+
+    CREATE test flashcard
+
+    VERIFY flashcard exists
+
+    VERIFY question is correct
+
+    VERIFY answer is correct
+
+END FUNCTION
+
+
+FUNCTION test_again_rating()
+
+    CREATE flashcard
+
+    RATE card as Again
+
+    VERIFY:
+
+        repetitions = 0
+
+        interval = 1
+
+END FUNCTION
+
+
+FUNCTION test_good_rating()
+
+    CREATE flashcard
+
+    RATE card Good several times
+
+    VERIFY review interval increases
+
+END FUNCTION
+
+
+FUNCTION test_easy_rating()
+
+    CREATE flashcard
+
+    RATE card Easy
+
+    VERIFY next review date moves farther away
+
+END FUNCTION
+
+
+FUNCTION test_search()
+
+    CREATE note containing:
+        "binary search"
+
+    SEARCH for:
+        "binary"
+
+    VERIFY note appears in results
+
+END FUNCTION
+
+
+FUNCTION test_quiz_score()
+
+    SET correct = 8
+
+    SET total = 10
+
+    CALCULATE percentage
+
+    VERIFY percentage = 80
+
+END FUNCTION
+
+
+FUNCTION test_study_session()
+
+    LOG 30 minute study session
+
+    VERIFY stored minutes = 30
+
+END FUNCTION
+
+
+FUNCTION test_invalid_study_minutes()
+
+    TRY entering:
+        -20
+
+    VERIFY program rejects value
+
+END FUNCTION
+
+
+FUNCTION test_goal_completion()
+
+    CREATE goal
+
+    MARK goal complete
+
+    VERIFY completed = TRUE
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 19
+# FUTURE VERSION 2 FEATURES
+############################################################
+
+# AFTER VERSION 1 WORKS:
+#
+# DO NOT build these first.
+#
+# A finished simple program is better than an unfinished
+# giant program.
+
+
+FUNCTION future_features()
+
+    FUTURE FEATURE:
+        colored terminal interface
+
+    FUTURE FEATURE:
+        command-line arguments
+
+        Example:
+
+        studyvault add-note
+
+        studyvault review
+
+        studyvault dashboard
+
+
+    FUTURE FEATURE:
+        fuzzy search
+
+
+    FUTURE FEATURE:
+        tags
+
+
+    FUTURE FEATURE:
+        note categories
+
+
+    FUTURE FEATURE:
+        Markdown notes
+
+
+    FUTURE FEATURE:
+        importing CSV flashcards
+
+
+    FUTURE FEATURE:
+        automatic database backups
+
+
+    FUTURE FEATURE:
+        configurable spaced repetition
+
+
+    FUTURE FEATURE:
+        study heatmap
+
+
+    FUTURE FEATURE:
+        weekly study report
+
+
+    FUTURE FEATURE:
+        longest study streak
+
+
+    FUTURE FEATURE:
+        difficult-card detection
+
+
+    FUTURE FEATURE:
+        weakest-subject detection
+
+
+    FUTURE FEATURE:
+        recommended next subject
+
+
+    FUTURE FEATURE:
+        encrypted private notes
+
+
+    FUTURE FEATURE:
+        REST API
+
+
+    FUTURE FEATURE:
+        web version
+
+
+    FUTURE FEATURE:
+        mobile-friendly version
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 20
+# ADVANCED ANALYTICS
+############################################################
+
+FUNCTION identify_weakest_subject()
+
+    GET all subjects
+
+
+    FOR EACH subject
+
+        CALCULATE average quiz score
+
+        CALCULATE flashcard failure rate
+
+        CALCULATE recent study time
+
+
+        CREATE weakness score based on:
+
+            low quiz scores
+
+            high flashcard failure rate
+
+            low recent study time
+
+    END FOR
+
+
+    SORT subjects by weakness score
+
+
+    RETURN subject with highest weakness score
+
+END FUNCTION
+
+
+
+############################################################
+# DIFFICULT FLASHCARD DETECTION
+############################################################
+
+FUNCTION identify_difficult_flashcards()
+
+    GET flashcard review history
+
+
+    FOR EACH flashcard
+
+        COUNT number of Again ratings
+
+        COUNT number of Hard ratings
+
+        COUNT total reviews
+
+
+        CALCULATE difficulty percentage
+
+
+        IF difficulty percentage
+           is above chosen threshold THEN
+
+            ADD flashcard to difficult_cards list
+
+        END IF
+
+    END FOR
+
+
+    SORT difficult cards
+    from most difficult
+    to least difficult
+
+
+    RETURN difficult_cards
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 21
+# WEEKLY REPORT
+############################################################
+
+FUNCTION weekly_report()
+
+    GET study sessions
+    from last seven days
+
+
+    CALCULATE:
+
+        total study minutes
+
+        total study sessions
+
+        most studied subject
+
+        least studied subject
+
+        quizzes completed
+
+        average quiz score
+
+        flashcards reviewed
+
+        goals completed
+
+
+    DISPLAY ""
+    DISPLAY "YOUR WEEK IN STUDYVAULT"
+
+    DISPLAY results
+
+
+    IF study time increased
+       compared with previous week THEN
+
+        DISPLAY:
+            "Your study time increased this week."
+
+    ELSE IF study time decreased THEN
+
+        DISPLAY:
+            "Your study time decreased this week."
+
+    END IF
+
+END FUNCTION
+
+
+
+############################################################
+# SECTION 22
+# PROGRAM EXIT
+############################################################
+
+FUNCTION exit_program()
+
+    SAVE all unsaved information
+
+    CLOSE database connection
+
+    DISPLAY ""
+    DISPLAY "StudyVault saved successfully."
+
+    DISPLAY "See you next time!"
+
+    STOP PROGRAM
+
+END FUNCTION
