@@ -6,7 +6,7 @@ The goal of StudyVault CL is to create one place where students can organize sub
 
 ## Current Version
 
-**Version 0.6**
+**Version 0.7**
 
 StudyVault currently supports:
 
@@ -40,6 +40,13 @@ StudyVault currently supports:
 - Calculating flashcard accuracy
 - Viewing review schedules
 - Viewing flashcard progress
+- Global search
+- Searching subjects
+- Searching notes
+- Searching flashcards
+- Partial-text matching
+- Case-insensitive search
+- Search-result previews
 - Persistent SQLite storage
 - Database-generated IDs
 - Input validation
@@ -249,7 +256,7 @@ Quiz results are stored persistently in SQLite.
 
 Version 0.6 introduced a spaced-repetition review system.
 
-Instead of showing every flashcard equally, StudyVault can now schedule flashcards for future review.
+Instead of showing every flashcard equally, StudyVault schedules flashcards for future review.
 
 During a review, users rate how well they remembered a flashcard:
 
@@ -260,25 +267,7 @@ During a review, users rate how well they remembered a flashcard:
 4. Easy  — I knew it immediately
 ```
 
-The rating determines when the flashcard should appear again.
-
-For example:
-
-```text
-Again
-  ↓
-Review sooner
-
-Good
-  ↓
-Review after a moderate interval
-
-Easy
-  ↓
-Review after a longer interval
-```
-
-StudyVault now tracks:
+StudyVault tracks:
 
 - Review count
 - Remembered count
@@ -303,7 +292,73 @@ Last reviewed: 2026-09-26
 Next review: 2026-09-29
 ```
 
-Review data remains saved after StudyVault closes because it is stored in SQLite.
+Review information remains stored in SQLite after StudyVault closes.
+
+## Version 0.7 — Global Search
+
+Version 0.7 introduced a global search system.
+
+Users can now search across StudyVault without manually opening every section.
+
+The Search menu includes:
+
+```text
+1. Global Search
+2. Search Notes
+3. Search Flashcards
+0. Back
+```
+
+Global Search searches:
+
+- Subject names
+- Note titles
+- Note contents
+- Flashcard questions
+- Flashcard answers
+
+Example:
+
+```text
+Search: binary
+
+NOTES
+--------------------
+ID 2: Binary Search Notes [Computer Science]
+
+FLASHCARDS
+--------------------
+ID 3: What is binary search? [Computer Science]
+Answer: An algorithm that repeatedly halves a sorted search space.
+
+Total results: 3
+```
+
+Version 0.7 also introduced:
+
+- Partial-text matching
+- Case-insensitive searches
+- Note-content previews
+- Search-result grouping
+- Empty-search validation
+- No-results handling
+- SQL `LIKE` queries
+
+For example, searching:
+
+```text
+binary
+```
+
+can match:
+
+```text
+Binary Search
+binary search algorithm
+What is binary search?
+```
+
+without requiring an exact full-string match.
 
 ## Database Structure
 
@@ -323,50 +378,22 @@ quiz_attempts
 
 A subject can have many notes and flashcards.
 
-For example:
+Example:
 
 ```text
 Computer Science
        │
        ├── Note: Binary Search Notes
-       │
        ├── Flashcard: What is binary search?
-       │
        └── Flashcard: What is a hash table?
 ```
 
-The database uses IDs to connect information.
-
-Example:
-
-```text
-subjects
-
-subject_id | name
------------|-----------------
-1          | Calculus I
-2          | Computer Science
-```
-
-A flashcard containing:
-
-```text
-subject_id = 2
-```
-
-belongs to:
-
-```text
-Computer Science
-```
-
-This is an example of a relational database relationship.
+The database uses IDs to connect related information.
 
 ## Planned Features
 
 Future versions of StudyVault CL will include:
 
-- Global search
 - Study-session tracking
 - Study goals
 - Progress analytics
@@ -406,6 +433,7 @@ studyvault-cl/
     ├── main.py
     ├── notes.py
     ├── quizzes.py
+    ├── search.py
     ├── spaced_repetition.py
     └── subjects.py
 ```
@@ -434,6 +462,7 @@ The main menu displays:
 4. Flashcards
 5. Quiz
 6. Spaced Repetition
+7. Search
 0. Exit
 ========================================
 ```
@@ -493,6 +522,19 @@ The main menu displays:
 ========================================
 ```
 
+## Search Menu
+
+```text
+========================================
+                 SEARCH
+========================================
+1. Global Search
+2. Search Notes
+3. Search Flashcards
+0. Back
+========================================
+```
+
 ## Computer Science Concepts Used
 
 StudyVault CL currently demonstrates:
@@ -520,6 +562,10 @@ StudyVault CL currently demonstrates:
 - Parameterized SQL queries
 - Persistent storage
 - Searching by ID
+- SQL `LIKE`
+- Partial-text searching
+- Case-insensitive searching
+- Search-result formatting
 - Randomization
 - String normalization
 - Date calculations
@@ -544,26 +590,6 @@ Update     UPDATE
 Delete     DELETE
 ```
 
-For example:
-
-```text
-Create flashcard
-      ↓
-INSERT
-
-View flashcards
-      ↓
-SELECT
-
-Edit flashcard
-      ↓
-UPDATE
-
-Delete flashcard
-      ↓
-DELETE
-```
-
 ## Parameterized Queries
 
 StudyVault uses SQL parameter placeholders.
@@ -585,25 +611,44 @@ The `?` placeholder lets Python safely provide information to SQLite without dir
 
 Parameterized queries also help protect the application from SQL injection.
 
+## Global Search and SQL LIKE
+
+Version 0.7 uses SQL `LIKE` queries for searching.
+
+For example:
+
+```python
+connection.execute(
+    """
+    SELECT name
+    FROM subjects
+    WHERE name LIKE ? COLLATE NOCASE
+    """,
+    (f"%{search_term}%",)
+)
+```
+
+The `%` symbols allow partial matching.
+
+For example:
+
+```text
+search term: bin
+```
+
+can match:
+
+```text
+Binary Search
+```
+
+This lets StudyVault search more naturally instead of requiring exact matches.
+
 ## Persistent Storage
 
 Starting with Version 0.3, StudyVault information remains saved after the program closes.
 
-```text
-User creates information
-          ↓
-Python processes it
-          ↓
-SQL query
-          ↓
-SQLite
-          ↓
-studyvault.db
-          ↓
-Information remains saved
-```
-
-Persistence now includes:
+Persistence currently includes:
 
 - Subjects
 - Notes
@@ -617,11 +662,11 @@ Persistence now includes:
 
 I created StudyVault CL to learn computer science by building a complete application from the ground up instead of only completing isolated programming exercises.
 
-I am developing the project incrementally so that each version introduces new features and new computer science concepts.
+I am developing the project incrementally so each version introduces new features and new computer science concepts.
 
 Rather than trying to build the entire application at once, each version represents a working development milestone.
 
-This project gives me hands-on experience with programming, databases, algorithms, testing, version control, debugging, and software documentation.
+This project gives me hands-on experience with programming, databases, algorithms, searching, version control, debugging, and software documentation.
 
 ## Development Roadmap
 
@@ -634,7 +679,7 @@ Version 0.3 → SQLite Database ✅
 Version 0.4 → Flashcards ✅
 Version 0.5 → Quiz System ✅
 Version 0.6 → Spaced Repetition ✅
-Version 0.7 → Search
+Version 0.7 → Search ✅
 Version 0.8 → Study Tracking
 Version 0.9 → Analytics and Testing
 Version 1.0 → Complete Portfolio Release
@@ -646,6 +691,6 @@ A full pseudocode design document is included in the `pseudocode` directory.
 
 🚧 StudyVault CL is currently under active development.
 
-Current release: **Version 0.6**
+Current release: **Version 0.7**
 
-Next planned release: **Version 0.7 — Search**
+Next planned release: **Version 0.8 — Study Tracking**
