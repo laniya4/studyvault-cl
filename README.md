@@ -6,7 +6,7 @@ The goal of StudyVault is to create one place where students can organize subjec
 
 ## Current Version
 
-**Version 0.2**
+**Version 0.3**
 
 StudyVault currently supports:
 
@@ -26,9 +26,9 @@ StudyVault currently supports:
 - Handling invalid menu choices
 - Exiting the application safely
 
-## Version 0.2 — Notes System
+## Version 0.3 — Notes System
 
-Version 0.2 introduces a complete Notes system.
+Version 0.3 introduces a complete Notes system.
 
 Users can:
 
@@ -136,7 +136,7 @@ The Notes menu includes:
 ========================================
 ```
 
-## What I Learned in Version 0.2
+## What I Learned in Version 0.3
 
 While building the Notes system, I practiced:
 
@@ -161,11 +161,11 @@ I also learned that Python lists begin counting at index `0`. Because users see 
 subjects[choice_number - 1]
 ```
 
-Version 0.2 also uses a `next_note_id` variable so each note receives a unique ID during the current program session.
+Version 0.3 also uses a `next_note_id` variable so each note receives a unique ID during the current program session.
 
 ## Current Limitation
 
-Version 0.2 stores information only while StudyVault is running.
+Version 0.3 stores information only while StudyVault is running.
 
 For example:
 
@@ -217,7 +217,7 @@ StudyVault is being built in stages.
 ```text
 Version 0.1 → Subjects ✅
 Version 0.2 → Notes ✅
-Version 0.3 → SQLite Database
+Version 0.3 → SQLite Database ✅
 Version 0.4 → Flashcards
 Version 0.5 → Quiz System
 Version 0.6 → Spaced Repetition
@@ -233,4 +233,4 @@ A full pseudocode design document is included in the `pseudocode` directory.
 
 🚧 StudyVault CL is currently under active development.
 
-Current release: **Version 0.2**
+Current release: **Version 0.3**
