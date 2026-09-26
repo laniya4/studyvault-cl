@@ -7,6 +7,7 @@ from notes import notes_menu
 from flashcards import flashcards_menu
 from quizzes import quiz_menu
 from spaced_repetition import spaced_repetition_menu
+from search import search_menu
 
 
 def show_menu():
@@ -20,6 +21,7 @@ def show_menu():
     print("4. Flashcards")
     print("5. Quiz")
     print("6. Spaced Repetition")
+    print("7. Search")
     print("0. Exit")
     print("========================================")
 
@@ -54,14 +56,13 @@ def main():
         elif choice == "6":
             spaced_repetition_menu()
 
+        elif choice == "7":
+            search_menu()
+
         elif choice == "0":
             print()
-            print(
-                "Thank you for using StudyVault CL."
-            )
-            print(
-                "Your information has been saved."
-            )
+            print("Thank you for using StudyVault CL.")
+            print("Your information has been saved.")
             print("Goodbye!")
 
             program_running = False
@@ -71,7 +72,7 @@ def main():
             print("That is not a valid option.")
             print(
                 "Please choose "
-                "0, 1, 2, 3, 4, 5, or 6."
+                "0, 1, 2, 3, 4, 5, 6, or 7."
             )
 
 
