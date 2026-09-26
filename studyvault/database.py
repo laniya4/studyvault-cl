@@ -5,29 +5,28 @@ import sqlite3
 from pathlib import Path
 
 
-# Find the main StudyVault project folder.
+# Main project folder
 PROJECT_FOLDER = Path(__file__).resolve().parent.parent
 
-# The database will be stored here:
+# Database location:
 # studyvault-cl/studyvault.db
 DATABASE_PATH = PROJECT_FOLDER / "studyvault.db"
 
 
 def get_connection():
     """
-    Open a connection to the StudyVault SQLite database.
+    Open a connection to the StudyVault database.
     """
 
     connection = sqlite3.connect(DATABASE_PATH)
 
-    # This lets us access columns by name.
-    # Example:
+    # Lets us use:
     # row["name"]
     # instead of:
     # row[0]
     connection.row_factory = sqlite3.Row
 
-    # Turn on foreign-key rules.
+    # Turn on foreign-key support.
     connection.execute("PRAGMA foreign_keys = ON")
 
     return connection
@@ -35,7 +34,7 @@ def get_connection():
 
 def initialize_database():
     """
-    Create all StudyVault database tables if they
+    Create all StudyVault tables if they
     do not already exist.
     """
 
@@ -77,7 +76,6 @@ def initialize_database():
             """
         )
 
-        # Index for finding notes by subject faster.
         connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_notes_subject_id
@@ -106,7 +104,6 @@ def initialize_database():
             """
         )
 
-        # Index for finding flashcards by subject faster.
         connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_flashcards_subject_id
@@ -114,9 +111,36 @@ def initialize_database():
             """
         )
 
-        # Save all database changes.
+        # ----------------------------------------
+        # QUIZ HISTORY TABLE
+        # ----------------------------------------
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS quiz_attempts (
+                quiz_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                subject_id INTEGER,
+                subject_name TEXT NOT NULL,
+                total_questions INTEGER NOT NULL,
+                correct_answers INTEGER NOT NULL,
+                percentage REAL NOT NULL,
+                completed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (subject_id)
+                    REFERENCES subjects(subject_id)
+                    ON DELETE SET NULL
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_quiz_subject_id
+            ON quiz_attempts(subject_id)
+            """
+        )
+
         connection.commit()
 
     finally:
-        # Always close the database connection.
         connection.close()
