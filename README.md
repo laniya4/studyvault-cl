@@ -1,256 +1,70 @@
 ## Current Version
 
-**Version 0.9**
+**Version 1.0**
 
-Add these to the current features list:
+StudyVault CL currently supports:
 
+- Adding and viewing subjects
+- Persistent SQLite database storage
+- Creating, reading, editing, and deleting notes
+- Connecting notes to subjects
+- Creating, viewing, studying, editing, and deleting flashcards
+- Connecting flashcards to subjects
+- Quiz mode
+- Persistent quiz history
+- Spaced repetition
+- Due-date scheduling for flashcards
+- Flashcard review statistics
+- Global search
+- Searching subjects
+- Searching notes
+- Searching flashcards
+- Partial-text and case-insensitive search
+- Study-session tracking
+- Recording study minutes and activities
+- Viewing study history
+- Viewing study totals
+- Per-subject study statistics
 - Analytics dashboard
 - StudyVault overview statistics
 - Study-session analytics
-- Quiz performance analytics
+- Quiz-performance analytics
 - Flashcard analytics
-- Average study-session calculations
-- Most-studied subject tracking
-- Average, highest, and lowest quiz scores
-- Flashcard review statistics
-- Flashcard accuracy calculations
-- Due-flashcard analytics
 - Automated testing with pytest
-- Temporary test databases
-- Database isolation during tests
-- Automated analytics tests
+- Temporary isolated test databases
+- 34 automated tests
+- Continuous integration with GitHub Actions
 
-## Version 0.9 — Analytics and Testing
+---
 
-Version 0.9 introduced analytics and automated testing to StudyVault CL.
+## Version 1.0 — Complete Portfolio Release
 
-### Analytics
+Version 1.0 represents the first complete portfolio release of StudyVault CL.
 
-StudyVault can now analyze information already stored in the SQLite database.
+StudyVault began as a small command-line program for storing subjects and gradually developed into a modular study-management application with persistent data storage, study tools, analytics, automated testing, and continuous integration.
 
-The Analytics menu includes:
+The Version 1.0 release combines all of the major systems developed throughout Versions 0.1 through 0.9.
 
-```text
-========================================
-               ANALYTICS
-========================================
-1. Overview
-2. Study Analytics
-3. Quiz Analytics
-4. Flashcard Analytics
-0. Back
-========================================
-```
+### Version 1.0 Includes
 
-### Overview
+- Subject management
+- Notes
+- SQLite persistence
+- Flashcards
+- Quiz mode
+- Spaced repetition
+- Global search
+- Study tracking
+- Analytics
+- Automated testing
+- GitHub Actions continuous integration
+- Modular Python architecture
+- Input validation
+- Persistent relationships between subjects and study data
 
-The Overview screen summarizes the entire StudyVault database.
-
-It can display:
-
-- Total subjects
-- Total notes
-- Total flashcards
-- Total quiz attempts
-- Total study sessions
-- Total study minutes
-- Total study time
-
-Example:
-
-```text
-========================================
-           STUDYVAULT OVERVIEW
-========================================
-Total Subjects: 2
-Total Notes: 3
-Total Flashcards: 5
-Total Quiz Attempts: 1
-Total Study Sessions: 2
-Total Study Minutes: 75
-Total Study Time: 1 hour(s) 15 minute(s)
-```
-
-### Study Analytics
-
-StudyVault can analyze study-session data including:
-
-- Number of study sessions
-- Total minutes studied
-- Total study time
-- Average session length
-- Most-studied subject
-- Study time grouped by subject
-
-Example:
-
-```text
-========================================
-             STUDY ANALYTICS
-========================================
-Total Sessions: 2
-Total Minutes: 75
-Total Time: 1 hour(s) 15 minute(s)
-Average Session: 37.5 minute(s)
-
-MOST STUDIED SUBJECT
---------------------
-Computer Science: 45 minute(s)
-```
-
-### Quiz Analytics
-
-StudyVault can analyze saved quiz attempts.
-
-It tracks:
-
-- Total quiz attempts
-- Average quiz score
-- Highest quiz score
-- Lowest quiz score
-- Quiz performance grouped by subject
-
-Example:
-
-```text
-========================================
-              QUIZ ANALYTICS
-========================================
-Total Attempts: 1
-Average Score: 66.7%
-Highest Score: 66.7%
-Lowest Score: 66.7%
-```
-
-### Flashcard Analytics
-
-StudyVault also analyzes flashcard and spaced-repetition activity.
-
-It can display:
-
-- Total flashcards
-- Total reviews
-- Remembered cards
-- Forgotten cards
-- Overall flashcard accuracy
-- Cards currently due
-- Most-reviewed flashcard
-
-Example:
-
-```text
-========================================
-           FLASHCARD ANALYTICS
-========================================
-Total Flashcards: 3
-Total Reviews: 3
-Remembered: 2
-Forgotten: 1
-Overall Accuracy: 66.7%
-Cards Due Today: 0
-```
-
-## Automated Testing
-
-Version 0.9 introduced automated testing with `pytest`.
-
-Before automated testing, StudyVault features were tested manually by running the program and entering test data.
-
-Now automated tests can verify expected behavior automatically.
-
-Run the tests with:
-
-```bash
-python3 -m pytest -v
-```
-
-The first StudyVault automated test suite contains six tests.
-
-Example successful result:
-
-```text
-collected 6 items
-
-test_empty_database_counts PASSED
-test_subject_count PASSED
-test_multiple_subject_count PASSED
-test_study_session_count PASSED
-test_invalid_table_name PASSED
-test_overview_output PASSED
-
-6 passed
-```
-
-The tests currently verify:
-
-- Empty-database analytics
-- Subject counting
-- Multiple-subject counting
-- Study-session counting
-- Invalid table-name handling
-- Analytics overview output
-
-StudyVault's tests use temporary SQLite databases.
-
-This means automated tests can create and modify test information without changing the user's real `studyvault.db` file.
-
-The testing process is:
-
-```text
-Create temporary database
-        ↓
-Initialize StudyVault tables
-        ↓
-Insert controlled test data
-        ↓
-Run function
-        ↓
-Compare actual result with expected result
-        ↓
-PASS ✅ or FAIL ❌
-```
-
-## Planned Features
-
-Future versions of StudyVault CL will include:
-
-- Study goals
-- Study streaks
-- CSV data export
-- Additional automated tests
-- GitHub Actions continuous testing
-- Portfolio documentation and final polish
-
-## Project Structure
-
-Update the project structure to include Analytics and tests:
-
-```text
-studyvault-cl/
-├── README.md
-├── .gitignore
-├── studyvault.db
-├── pseudocode/
-│   └── studyvault_cl.pseudo
-├── studyvault/
-│   ├── __init__.py
-│   ├── analytics.py
-│   ├── database.py
-│   ├── flashcards.py
-│   ├── main.py
-│   ├── notes.py
-│   ├── quizzes.py
-│   ├── search.py
-│   ├── spaced_repetition.py
-│   ├── study_tracking.py
-│   └── subjects.py
-└── tests/
-    └── test_analytics.py
-```
+---
 
 ## Main Menu
-
-Update the main menu documentation to:
 
 ```text
 ========================================
@@ -269,9 +83,321 @@ Update the main menu documentation to:
 ========================================
 ```
 
+---
+
+## Core Features
+
+### Subjects
+
+Users can:
+
+- Add subjects
+- View saved subjects
+- Prevent duplicate subject names
+- Reject empty subject names
+- Store subjects persistently with SQLite
+
+### Notes
+
+Users can:
+
+- Create notes
+- Connect notes to subjects
+- View notes
+- Read complete notes
+- Edit notes
+- Delete notes
+- Validate note IDs
+- Store notes persistently
+
+### Flashcards
+
+Users can:
+
+- Create flashcards
+- Connect flashcards to subjects
+- View flashcards
+- Study flashcards
+- Edit flashcards
+- Delete flashcards
+- Store flashcards persistently
+
+### Quiz System
+
+Users can:
+
+- Take quizzes generated from saved flashcards
+- Answer study questions
+- Receive immediate feedback
+- View correct answers
+- Receive a final score
+- View percentage results
+- Save quiz attempts
+- View quiz history
+
+### Spaced Repetition
+
+StudyVault includes a spaced-repetition review system.
+
+After reviewing a card, users rate how well they remembered it:
+
+```text
+1. Again
+2. Hard
+3. Good
+4. Easy
+```
+
+StudyVault then calculates the next review interval and stores the next-review date in SQLite.
+
+The system tracks:
+
+- Review count
+- Remembered count
+- Forgotten count
+- Accuracy
+- Current interval
+- Last review date
+- Next review date
+- Due flashcards
+
+### Global Search
+
+StudyVault can search across saved study information.
+
+Users can search:
+
+- Subjects
+- Notes
+- Flashcards
+
+Search supports:
+
+- Partial-text matching
+- Case-insensitive matching
+- Note-title matching
+- Note-content matching
+- Flashcard-question matching
+- Flashcard-answer matching
+- Search-result previews
+
+### Study Tracking
+
+Users can:
+
+- Log study sessions
+- Choose the subject studied
+- Record study minutes
+- Record study activities
+- View study history
+- View total study time
+- View totals by subject
+
+Study-session information remains available after StudyVault closes because it is stored in SQLite.
+
+### Analytics
+
+StudyVault can analyze stored learning data through four analytics screens:
+
+```text
+========================================
+               ANALYTICS
+========================================
+1. Overview
+2. Study Analytics
+3. Quiz Analytics
+4. Flashcard Analytics
+0. Back
+========================================
+```
+
+Analytics include:
+
+- Total subjects
+- Total notes
+- Total flashcards
+- Total quiz attempts
+- Total study sessions
+- Total study minutes
+- Average study-session length
+- Most-studied subject
+- Average quiz score
+- Highest quiz score
+- Lowest quiz score
+- Flashcard review totals
+- Remembered and forgotten cards
+- Flashcard accuracy
+- Cards currently due
+
+---
+
+## Persistent Storage
+
+StudyVault uses SQLite for persistent data storage.
+
+Information can remain available after the application closes, including:
+
+- Subjects
+- Notes
+- Flashcards
+- Quiz history
+- Spaced-repetition progress
+- Review dates
+- Review statistics
+- Study sessions
+- Study-time information
+
+The application initializes the required database tables automatically when StudyVault starts.
+
+---
+
+## Automated Testing
+
+StudyVault CL includes an automated test suite built with `pytest`.
+
+Run all tests locally with:
+
+```bash
+python3 -m pytest -v
+```
+
+The Version 1.0 test suite contains:
+
+```text
+34 automated tests
+```
+
+Current test areas include:
+
+### Analytics Tests
+
+Tests verify:
+
+- Empty-database analytics
+- Subject counting
+- Multiple-subject counting
+- Study-session counting
+- Invalid table-name protection
+- Analytics output
+
+### Database Tests
+
+Tests verify:
+
+- Database creation
+- Subjects table
+- Notes table
+- Flashcards table
+- Quiz-attempts table
+- Study-sessions table
+- SQLite foreign-key enforcement
+
+### Search Tests
+
+Tests verify:
+
+- Subject search
+- Case-insensitive searching
+- Partial-text searching
+- Note-title searching
+- Note-content searching
+- Flashcard-question searching
+- Flashcard-answer searching
+- No-result behavior
+- Short search-result previews
+- Long search-result previews
+
+### Spaced-Repetition Tests
+
+Tests verify:
+
+- Again intervals
+- Hard intervals
+- Good intervals
+- Easy intervals
+- Due flashcard retrieval
+- Future flashcards not appearing as due
+- Saving successful reviews
+- Saving forgotten reviews
+- Review statistics
+- Review scheduling
+- Reviewed cards not immediately becoming due again
+
+The tests use temporary SQLite databases so automated testing does not modify the user's real StudyVault data.
+
+---
+
+## Continuous Integration
+
+StudyVault CL uses GitHub Actions for continuous integration.
+
+The workflow is stored at:
+
+```text
+.github/workflows/tests.yml
+```
+
+GitHub automatically runs the StudyVault test suite when code is pushed to the `main` branch or when a pull request targets `main`.
+
+The CI process is:
+
+```text
+Push code to GitHub
+        ↓
+GitHub Actions starts
+        ↓
+Repository is checked out
+        ↓
+Python is installed
+        ↓
+pytest is installed
+        ↓
+StudyVault tests run
+        ↓
+PASS ✅ or FAIL ❌
+```
+
+Version 1.0 has successfully passed the automated GitHub Actions workflow.
+
+---
+
+## Project Structure
+
+```text
+studyvault-cl/
+├── .github/
+│   └── workflows/
+│       └── tests.yml
+├── pseudocode/
+│   └── studyvault_cl.pseudo
+├── studyvault/
+│   ├── __init__.py
+│   ├── analytics.py
+│   ├── database.py
+│   ├── flashcards.py
+│   ├── main.py
+│   ├── notes.py
+│   ├── quizzes.py
+│   ├── search.py
+│   ├── spaced_repetition.py
+│   ├── study_tracking.py
+│   └── subjects.py
+├── tests/
+│   ├── test_analytics.py
+│   ├── test_database.py
+│   ├── test_search.py
+│   └── test_spaced_repetition.py
+├── .gitignore
+└── README.md
+```
+
+The local `studyvault.db` database is excluded from Git so personal StudyVault data is not committed to the repository.
+
+---
+
 ## Technologies
 
-StudyVault CL currently uses:
+StudyVault CL uses:
 
 - Python
 - SQLite
@@ -279,36 +405,96 @@ StudyVault CL currently uses:
 - pytest
 - Git
 - GitHub
+- GitHub Actions
 - VS Code
 
-Future development will also use:
+---
 
-- GitHub Actions
+## What I Learned
 
-## Computer Science Concepts Added in Version 0.9
+Building StudyVault CL provided practice with:
 
-Version 0.9 introduced additional concepts including:
+### Python
 
-- Data aggregation
-- SQL aggregate functions
+- Variables
+- Functions
+- Conditionals
+- Loops
+- Lists
+- Dictionaries
+- Modules
+- User input
+- Input validation
+- Error handling
+- Program organization
+
+### Databases
+
+- SQLite
+- SQL
+- Tables
+- Primary keys
+- Foreign keys
+- Relationships
+- CRUD operations
+- Persistent storage
+- Aggregate queries
+- Database-generated IDs
+
+### SQL
+
+- `SELECT`
+- `INSERT`
+- `UPDATE`
+- `DELETE`
 - `COUNT`
 - `SUM`
 - `AVG`
 - `MIN`
 - `MAX`
-- SQL grouping
+- `JOIN`
 - `GROUP BY`
-- SQL sorting
+- `ORDER BY`
+
+### Algorithms and Application Logic
+
+- Searching
+- Partial-text matching
+- Case-insensitive matching
+- Quiz scoring
+- Spaced-repetition scheduling
+- Study statistics
+- Data aggregation
+
+### Software Engineering
+
+- Modular program architecture
+- Separation of responsibilities
+- Incremental development
+- Versioning
+- Git commits
+- GitHub repositories
+- Software documentation
 - Automated testing
 - Unit testing
+- Regression testing
+- Test isolation
+- Continuous integration
+
+### Testing
+
 - pytest
 - Assertions
 - Fixtures
 - Temporary databases
-- Test isolation
-- Dependency replacement with `monkeypatch`
+- `monkeypatch`
 - Capturing terminal output
-- Regression testing
+- Testing database behavior
+- Testing search behavior
+- Testing scheduling logic
+- GitHub Actions
+
+---
 
 ## Development Roadmap
 
@@ -322,13 +508,39 @@ Version 0.6 → Spaced Repetition ✅
 Version 0.7 → Search ✅
 Version 0.8 → Study Tracking ✅
 Version 0.9 → Analytics and Testing ✅
-Version 1.0 → Complete Portfolio Release
+Version 1.0 → Complete Portfolio Release ✅
 ```
+
+---
+
+## Future Enhancements
+
+Version 1.0 completes the original StudyVault CL roadmap.
+
+Possible future improvements include:
+
+- Study goals
+- Study streaks
+- CSV data export
+- Additional automated tests
+- More advanced analytics
+- Database migrations
+- Configuration settings
+- Packaging StudyVault as an installable Python application
+- A graphical or web-based interface
+
+These are future enhancements and are not required for the Version 1.0 release.
+
+---
 
 ## Status
 
-🚧 StudyVault CL is currently under active development.
+✅ **StudyVault CL Version 1.0 is complete.**
 
-Current release: **Version 0.9**
+Current release: **Version 1.0**
 
-Next planned release: **Version 1.0 — Complete Portfolio Release**
+Automated test suite: **34 tests passing**
+
+Continuous integration: **GitHub Actions passing**
+
+StudyVault CL now provides a complete command-line study-management system with persistent storage, study tools, analytics, automated testing, and continuous integration.
