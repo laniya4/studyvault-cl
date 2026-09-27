@@ -9,6 +9,7 @@ from quizzes import quiz_menu
 from spaced_repetition import spaced_repetition_menu
 from search import search_menu
 from study_tracking import study_tracking_menu
+from analytics import analytics_menu
 
 
 def show_menu():
@@ -24,6 +25,7 @@ def show_menu():
     print("6. Spaced Repetition")
     print("7. Search")
     print("8. Study Tracking")
+    print("9. Analytics")
     print("0. Exit")
     print("========================================")
 
@@ -64,6 +66,9 @@ def main():
         elif choice == "8":
             study_tracking_menu()
 
+        elif choice == "9":
+            analytics_menu()
+
         elif choice == "0":
             print()
             print(
@@ -81,7 +86,7 @@ def main():
             print("That is not a valid option.")
             print(
                 "Please choose "
-                "0, 1, 2, 3, 4, 5, 6, 7, or 8."
+                "0, 1, 2, 3, 4, 5, 6, 7, 8, or 9."
             )
 
 
